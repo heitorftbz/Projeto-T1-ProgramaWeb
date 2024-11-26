@@ -1,0 +1,46 @@
+[33mcommit adfaf2ab2235bb84fcfe0101114f0c6fb4d26e5e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: heitorftbz <heitorjavert@gmail.com>
+Date:   Thu Nov 14 21:45:18 2024 -0300
+
+    Delete admin directory
+
+[33mcommit 1829c5930ab846df30eb86ea5e4eb4379c78a6e1[m
+Author: heitorftbz <heitorjavert@gmail.com>
+Date:   Thu Nov 14 21:45:10 2024 -0300
+
+    Delete enviar_contato.php
+
+[33mcommit e24f0a6e302b713726783b8fff52ecf6505dffd9[m
+Author: heitorftbz <heitorjavert@gmail.com>
+Date:   Thu Nov 14 21:44:57 2024 -0300
+
+    Delete contato.php
+
+[33mcommit b46c17fcc1fb9ccc7ebc92d7ec6fd922ef6365df[m
+Author: heitorftbz <heitorjavert@gmail.com>
+Date:   Thu Nov 14 21:44:45 2024 -0300
+
+    Delete config.inc.php
+
+[33mcommit 7724732442a180c39e5377248a6c49a97d11261d[m[33m ([m[1;31morigin/Heitor[m[33m)[m
+Merge: 07a97cb 8a0bbe3
+Author: heitorftbz <heitorjavert@gmail.com>
+Date:   Wed Nov 13 13:23:45 2024 -0300
+
+    Merge pull request #1 from heitorftbz/Heitor
+    
+    SITE 0.0.1
+
+[33mcommit 8a0bbe36809a277ae64ef16e999f4deda46d029a[m
+Author: heitorftbz <heitorjavert@gmail.com>
+Date:   Wed Nov 13 13:23:06 2024 -0300
+
+    SITE 0.0.1
+    
+    PROTOTIPO
+
+[33mcommit 07a97cb23592fffc44da86df0c95c1be2223664b[m[33m ([m[1;31morigin/bastiao[m[33m, [m[1;31morigin/Rick[m[33m, [m[1;31morigin/Jean[m[33m)[m
+Author: heitorftbz <heitorjavert@gmail.com>
+Date:   Wed Nov 13 09:36:49 2024 -0300
+
+    Initial commit
