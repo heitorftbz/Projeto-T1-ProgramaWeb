@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA_Compatible" content="IR-edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tela de Login</title>
+  <link rel="stylesheet" href="style.css">
+  
+</head>
+
+<body>
+  <div class="login-container">
+    <h1>Login</h1>
+    <form action="processo_login.php" method="POST">
+
+        <input type="email" name="email" placeholder="Email" required>
+        <span class="icon"><ion-icon name="mail"></ion-icon></span>
+        <br></br>
+        <input type="password" name="password" placeholder="Senha" required>
+        <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+        <br></br>
+        <button type="submit">Entrar</button>
+        <p>Não tem uma conta? <a href="#" class="register-link">Registre-se</a></p>
+     </form>
+  </div>
+  
+  <script> src="script.js" </script>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  
+</body>
+</html>
