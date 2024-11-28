@@ -1,18 +1,15 @@
 <?php
-include("topo.php");
-include_once("menu.php");
+include("topo.php");  // Inclui o cabeçalho
+include_once("menu.php");  // Inclui o menu
 
-if (empty($_SERVER['QUERY_STRING'])) 
-{
-    $var = "conteudo.php";
+if (empty($_SERVER['QUERY_STRING'])) {
+    $var = "conteudo.php";  // Página padrão
     include("$var");
+} else {
+    $pg = $_GET['pg'];  // Página fornecida na URL
+    include_once("$pg.php");
 }
-else
-{
-    $pg = $_GET ['pg'];
-    include_once ("$pg.php");
-}
-include_once('Vercomentarios.php');
 
-
-include_once ("rodape.php");
+include_once('Vercomentarios.php');  // Inclui os comentários (pode ser a página de comentários)
+include_once("rodape.php");  // Inclui o rodapé
+?>

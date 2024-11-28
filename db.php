@@ -1,12 +1,13 @@
 <?php
-$servername = "localhost";
-$username = "root"; 
-$password = "C37785mc37785m"; 
-$dbname = "db_projeto1_php"; 
+// db.php
+$host = 'seu_host';
+$dbname = 'seu_banco';
+$user = 'seu_usuario';
+$password = 'sua_senha';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Conexão falhou: " . $conn->connect_error);
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Erro ao conectar ao banco de dados: " . $e->getMessage());
 }
-?>
