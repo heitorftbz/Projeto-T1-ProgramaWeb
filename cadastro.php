@@ -1,17 +1,7 @@
 <?php
-$servidor = "localhost";
-$usuario = "root"; 
-$senha = ""; 
-$banco = "db_projeto1_php";
-
-$conn = new mysqli($servidor, $usuario, $senha, $banco);
-
-if ($conn->connect_error) {
-    die("Falha na conexão com o banco de dados: " . $conn->connect_error);
-}
+require_once 'db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
     $nome = trim(htmlspecialchars($_POST['nome']));
     $email = trim(htmlspecialchars($_POST['email']));
     $senha = trim(htmlspecialchars($_POST['senha']));
@@ -23,34 +13,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $erro = "Por favor, insira um email válido.";
     } else {
-
         if ($senha !== $confirmar_senha) {
             $erro = "As senhas não coincidem!";
         } else {
-
-            // Criptografando a senha antes de salvar no banco de dados
             $senha_criptografada = password_hash($senha, PASSWORD_BCRYPT);
 
-            $sql = "INSERT INTO login (usuario, email, senha, data_nascimento) VALUES (?, ?, ?, ?)";
-            if ($stmt = $conn->prepare($sql)) {
-                $stmt->bind_param("ssss", $nome, $email, $senha_criptografada, $data_nascimento);
+            try {
+                $sql = "INSERT INTO login (usuario, email, senha, data_nascimento) VALUES (:nome, :email, :senha, :data_nascimento)";
+                $stmt = $pdo->prepare($sql);
+
+                $stmt->bindParam(':nome', $nome);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':senha', $senha_criptografada);
+                $stmt->bindParam(':data_nascimento', $data_nascimento);
 
                 if ($stmt->execute()) {
                     $sucesso = "Cadastro realizado com sucesso!";
                 } else {
-                    $erro = "Erro ao cadastrar: " . $stmt->error;
+                    $erro = "Erro ao cadastrar: " . implode(", ", $stmt->errorInfo());
                 }
-
-                $stmt->close();
-            } else {
-                $erro = "Erro ao preparar a consulta: " . $conn->error;
+            } catch (PDOException $e) {
+                $erro = "Erro ao executar a consulta: " . $e->getMessage();
             }
         }
     }
 }
-
-$conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-br">
