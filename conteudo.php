@@ -1,5 +1,5 @@
 <?php
-require 'db.php'; // Inclui a conexão ao banco de dados
+require 'db.php';  // Inclui a conexão ao banco de dados
 
 $filmes = $pdo->query("SELECT * FROM Catalogofilmes ORDER BY release_date DESC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -10,7 +10,7 @@ $filmes = $pdo->query("SELECT * FROM Catalogofilmes ORDER BY release_date DESC")
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Filmes</title>
     <style>
-        /* Seu CSS permanece o mesmo */
+        
     </style>
 </head>
 <body>
