@@ -1,6 +1,5 @@
 <?php
 include("topo.php");  // Inclui o cabeçalho
-include_once("menu.php");  // Inclui o menu
 
 if (empty($_SERVER['QUERY_STRING'])) {
     $var = "conteudo.php";  // Página padrão

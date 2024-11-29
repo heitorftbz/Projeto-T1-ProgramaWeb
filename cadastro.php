@@ -40,7 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -49,33 +48,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Página de Cadastro</title>
     <style>
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background-image: linear-gradient(to right, rgb(20, 147, 220), rgb(17, 54, 71));
-        }
-        .box {
+            font-family: 'Arial', sans-serif;
+            background-image: url('https://wallpapers.com/images/featured/movie-9pvmdtvz4cb0xl37.jpg');
+            background-size: cover;
+            background-position: center;
             color: white;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .box {
             background-color: rgba(0, 0, 0, 0.8);
-            padding: 15px;
-            border-radius: 15px;
-            width: 20%;
-        }
-        fieldset {
-            border: 3px solid dodgerblue;
-        }
-        legend {
-            border: 1px solid dodgerblue;
-            padding: 10px;
-            text-align: center;
-            background-color: dodgerblue;
+            padding: 30px;
             border-radius: 10px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
+
+        h2 {
+            color: #e50914;
+        }
+
         .inputBox {
             position: relative;
+            margin-bottom: 20px;
         }
+
         .inputUser {
             background: none;
             border: none;
@@ -84,54 +91,79 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             color: white;
             font-size: 15px;
             width: 100%;
+            padding: 10px 0;
             letter-spacing: 2px;
         }
+
         .labelInput {
             position: absolute;
             top: 0px;
             left: 0px;
             pointer-events: none;
             transition: .5s;
+            color: #bbb;
         }
+
         .inputUser:focus ~ .labelInput,
         .inputUser:valid ~ .labelInput {
             top: -20px;
             font-size: 12px;
-            color: dodgerblue;
+            color: #e50914;
         }
-        #data_nascimento {
+
+        input[type="date"] {
+            background: none;
             border: none;
-            padding: 8px;
-            border-radius: 10px;
-            outline: none;
-            font-size: 15px;
-        }
-        #submit {
-            background-image: linear-gradient(to right, rgb(0, 92, 197), rgb(90, 20, 220));
-            width: 100%;
-            border: none;
-            padding: 15px;
+            border-bottom: 1px solid white;
             color: white;
             font-size: 15px;
-            cursor: pointer;
-            border-radius: 10px;
+            padding: 8px;
+            width: 100%;
         }
+
+        #submit {
+    background-color: #e50914; /* Alterado para vermelho */
+    width: 100%;
+    border: none;
+    padding: 15px;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+}
+
+#submit:hover {
+    background-color: #b4070f; /* Um tom de vermelho mais escuro para o hover */
+}
+
         .msg {
             color: red;
             text-align: center;
         }
+
         .success {
             color: green;
         }
+
+        nav {
+            margin-top: 15px;
+        }
+
+        nav a {
+            color: #e50914;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 <body>
-    <div class="box">
-        <form action="cadastro.php" method="POST">
-            <fieldset>
-                <legend><b>Cadastre-se aqui!</b></legend>
-                <br>
 
+    <div class="container">
+        <div class="box">
+            <form action="cadastro.php" method="POST">
+                <h2>Cadastre-se</h2>
                 <?php if (isset($erro)): ?>
                     <p class="msg"><?= $erro; ?></p>
                 <?php elseif (isset($sucesso)): ?>
@@ -142,35 +174,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="text" name="nome" id="nome" class="inputUser" required>
                     <label for="nome" class="labelInput">Nome completo</label>
                 </div>
-                <br><br>
+
                 <div class="inputBox">
                     <input type="email" name="email" id="email" class="inputUser" required>
                     <label for="email" class="labelInput">Email</label>
                 </div>
-                <br><br>
+
                 <div class="inputBox">
                     <input type="password" name="senha" id="senha" class="inputUser" required>
                     <label for="senha" class="labelInput">Senha</label>
                 </div>
-                <br><br>
+
                 <div class="inputBox">
                     <input type="password" name="confirmar_senha" id="confirmar_senha" class="inputUser" required>
-                    <label for="confirmar_senha" class="labelInput">Confirmação de senha</label>
+                    <label for="confirmar_senha" class="labelInput">Confirme a senha</label>
                 </div>
-                <br><br>
+
                 <div class="inputBox">
                     <label for="data_nascimento"><b>Data de nascimento</b></label>
                     <input type="date" name="data_nascimento" id="data_nascimento" required>
                 </div>
-                <br><br>
-                <input type="submit" href="index.php" id="submit" value="Cadastrar">
+
+                <input type="submit" id="submit" value="Cadastrar">
+
                 <nav>
-                    <ul>
-                        <li><a href="index.php">Voltar para Login.</a></li>
-                    </ul>
+                    
+                    <a href="index.php">Voltar para Login</a></li>
+                    
                 </nav>
-            </fieldset>
-        </form>
+            </form>
+        </div>
     </div>
+
 </body>
 </html>

@@ -12,6 +12,10 @@ body{
     border-radius: 15px;
     color: #fff;
  }
+
+ .redd {
+   color: red;
+ }
  input{
     padding: 15px;
     border: none;
