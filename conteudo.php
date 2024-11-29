@@ -1,18 +1,38 @@
 <?php
-require 'db.php';  // Inclui a conexão ao banco de dados
+require 'db.php'; // Inclui a conexão ao banco de dados
 
 // Consulta para obter todos os filmes
 $filmes = $pdo->query("SELECT * FROM catalogofilmes ORDER BY release_date DESC")->fetchAll(PDO::FETCH_ASSOC);
 
-$comentarios_por_filme = [];
-
 // Consulta para buscar os comentários de todos os filmes
+$comentarios_por_filme = [];
 foreach ($filmes as $filme) {
     $filme_id = $filme['id'];
     $comentarios_stmt = $pdo->prepare("SELECT * FROM comentarios WHERE filme_id = :id ORDER BY data_comentario DESC");
     $comentarios_stmt->bindParam(':id', $filme_id, PDO::PARAM_INT);
     $comentarios_stmt->execute();
     $comentarios_por_filme[$filme_id] = $comentarios_stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Adicionar novo comentário
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filme_id'])) {
+    $filme_id = $_POST['filme_id'];
+    $autor = $_POST['autor'] ?? 'Anônimo';
+    $comentario = $_POST['comentario'] ?? '';
+
+    if (!empty($comentario)) {
+        $stmt = $pdo->prepare("INSERT INTO comentarios (filme_id, autor, comentario, data_comentario) VALUES (:filme_id, :autor, :comentario, NOW())");
+        $stmt->bindParam(':filme_id', $filme_id, PDO::PARAM_INT);
+        $stmt->bindParam(':autor', $autor, PDO::PARAM_STR);
+        $stmt->bindParam(':comentario', $comentario, PDO::PARAM_STR);
+        $stmt->execute();
+
+        // Atualiza os comentários do filme após o envio
+        $comentarios_stmt = $pdo->prepare("SELECT * FROM comentarios WHERE filme_id = :id ORDER BY data_comentario DESC");
+        $comentarios_stmt->bindParam(':id', $filme_id, PDO::PARAM_INT);
+        $comentarios_stmt->execute();
+        $comentarios_por_filme[$filme_id] = $comentarios_stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -73,6 +93,27 @@ foreach ($filmes as $filme) {
             font-style: italic;
             color: #777;
         }
+        .form-comentario {
+            margin-top: 15px;
+        }
+        .form-comentario input, .form-comentario textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-comentario button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-comentario button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -99,6 +140,13 @@ foreach ($filmes as $filme) {
                     <?php else: ?>
                         <p class="no-comments">Nenhum comentário encontrado para este filme.</p>
                     <?php endif; ?>
+
+                    <form class="form-comentario" method="POST">
+                        <input type="hidden" name="filme_id" value="<?= $filme['id'] ?>">
+                        <input type="text" name="autor" placeholder="Seu nome (opcional)">
+                        <textarea name="comentario" placeholder="Adicione seu comentário"></textarea>
+                        <button type="submit">Enviar Comentário</button>
+                    </form>
                 </div>
             </div>
         <?php endforeach; ?>
