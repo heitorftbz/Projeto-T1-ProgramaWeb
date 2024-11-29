@@ -1,38 +1,40 @@
 <?php
-include('db.php');  // Conexão com o banco de dados
+include('db.php');  // Inclui a conexão PDO
 
 $message = '';  // Mensagem a ser exibida ao usuário
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Captura e sanitiza os dados
-    $email = $conn->real_escape_string($_POST['email']);
+    // Captura os dados do formulário
+    $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Consulta SQL para buscar o usuário
-    $query = "SELECT * FROM login WHERE email = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    // Verifica se a consulta retornou um resultado
-    if ($result->num_rows > 0) {
-        // Obtém o usuário
-        $login = $result->fetch_assoc();
+    try {
+        // Consulta SQL para buscar o usuário
+        $query = "SELECT * FROM login WHERE email = :email";
+        $stmt = $pdo->prepare($query);
         
-        // Verifica se a senha fornecida bate com a do banco de dados usando password_verify
-        if (password_verify($password, $login['senha'])) {
-            // Senha correta, redireciona para a página inicial
-            header('Location: pginicial.php');
-            exit(); // Importante para garantir que o script PHP pare após o redirecionamento
+        // Bind do parâmetro
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+
+        // Verifica se a consulta retornou um resultado
+        if ($stmt->rowCount() > 0) {
+            $login = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            // Verifica se a senha fornecida bate com a do banco de dados usando password_verify
+            if (password_verify($password, $login['senha'])) {
+                // Senha correta, redireciona para a página inicial
+                header('Location: pginicial.php');
+                exit(); // Impede que o script continue executando após o redirecionamento
+            } else {
+                $message = "Email ou senha incorretos.";
+            }
         } else {
             $message = "Email ou senha incorretos.";
         }
-    } else {
-        $message = "Email ou senha incorretos.";
+    } catch (PDOException $e) {
+        $message = "Erro ao consultar o banco de dados: " . $e->getMessage();
     }
-
-    $stmt->close();
 }
 ?>
 
