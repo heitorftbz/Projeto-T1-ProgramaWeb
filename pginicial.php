@@ -10,6 +10,5 @@ if (empty($_SERVER['QUERY_STRING'])) {
     include_once("$pg.php");
 }
 
-include_once('Vercomentarios.php');  // Inclui os comentários (pode ser a página de comentários)
 include_once("rodape.php");  // Inclui o rodapé
 ?>

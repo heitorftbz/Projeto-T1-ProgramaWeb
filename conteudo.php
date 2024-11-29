@@ -34,7 +34,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filme_id'])) {
         $comentarios_por_filme[$filme_id] = $comentarios_stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
+
+// Excluir comentário
+if (isset($_POST['excluir_comentario']) && isset($_POST['comentario_id'])) {
+    $comentario_id = $_POST['comentario_id'];
+
+    // Exclui o comentário sem a necessidade de verificar o autor
+    $stmt = $pdo->prepare("DELETE FROM comentarios WHERE id = :comentario_id");
+    $stmt->bindParam(':comentario_id', $comentario_id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Atualiza os comentários do filme após a exclusão
+    $comentarios_stmt = $pdo->prepare("SELECT * FROM comentarios WHERE filme_id = :id ORDER BY data_comentario DESC");
+    $comentarios_stmt->bindParam(':id', $_POST['filme_id'], PDO::PARAM_INT);
+    $comentarios_stmt->execute();
+    $comentarios_por_filme[$_POST['filme_id']] = $comentarios_stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -104,8 +121,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filme_id'])) {
             border-radius: 4px;
         }
         .form-comentario button {
+
             background-color: #007BFF;
             color: white;
+            margin-top: 20px;
             padding: 10px;
             border: none;
             border-radius: 4px;
@@ -113,6 +132,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filme_id'])) {
         }
         .form-comentario button:hover {
             background-color: #0056b3;
+        }
+        /* Estilo para o botão de exclusão */
+        .btn-excluir {
+            background-color: #FF4D4D;
+            color: white;
+            padding: 8px 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-excluir:hover {
+            background-color: #ff0000;
+            transform: scale(1.1);
+        }
+        .btn-excluir:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
@@ -135,6 +173,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filme_id'])) {
                             <div class="comentario">
                                 <p class="autor"><?= htmlspecialchars($comentario['autor']) ?> disse:</p>
                                 <p class="texto"><?= htmlspecialchars($comentario['comentario']) ?></p>
+                                <!-- Botão de excluir estilizado -->
+                                <form  method="POST">
+                                    <input type="hidden" name="comentario_id" value="<?= $comentario['id'] ?>">
+                                    <input type="hidden" name="filme_id" value="<?= $filme['id'] ?>">
+                                    <button type="submit" name="excluir_comentario" class="btn-excluir">Excluir Comentário</button>
+                                </form>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
