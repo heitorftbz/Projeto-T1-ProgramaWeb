@@ -161,7 +161,7 @@ session_start();
         <ul>
             <li><a href="pginicial.php">Início</a></li>
             <li><a href="contato.php">Contato</a></li>
-            <li><a href="gerenciar_filmes.php">Meus comentários</a></li>
+            <li><a href="adicionafilme.php">Adicionar filme</a></li>
         </ul>
     </nav>
 
