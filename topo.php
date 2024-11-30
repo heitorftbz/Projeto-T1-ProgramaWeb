@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 ?>
 
@@ -247,17 +248,16 @@ session_start();
     <nav>
         <ul>
             <li><a href="pginicial.php">Início</a></li>
-            <li><a href="contato.php">Contato</a></li>
+            <li><a href="sobrenos.php">Sobre nós</a></li>
         </ul>
     </nav>
 
-    <a href="adicionafilme.php" class="cta-button">Adicionar Filme</a>
+    <a href="faleconosco.php" class="cta-button">Fale conosco</a>
 </header>
 
 <main>
     <div class="hero-banner">
         <h1>Bem-vindo ao Melhor Conteúdo de Filmes</h1>
-        <a href="faleconosco.php" class="cta-button">Fale Conosco</a>
     </div>
 
     <section>

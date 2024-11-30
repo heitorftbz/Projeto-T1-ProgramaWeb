@@ -29,7 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Executar a query
             if ($stmt->execute()) {
-                echo "Filme adicionado com sucesso!";
+                // Redirecionar para a página `conteudo.php` após o sucesso
+                header("Location: pginicial.php");
+                exit();
             } else {
                 echo "Erro ao adicionar filme.";
             }
@@ -169,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <div class="container">
         <h1>Adicionar Filme</h1>
-        <form action="adicionar_filme.php" method="POST" enctype="multipart/form-data">
+        <form action="adicionafilme.php" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="title">Título do Filme:</label>
                 <input type="text" name="title" id="title" required>
@@ -187,11 +189,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="file" name="image" id="image" accept="image/*" required>
             </div>
             <button type="submit">Adicionar Filme</button>
-        </form>
-
-        <!-- Botão para voltar à página inicial -->
-        <form action="pginicial.php" method="get">
-            <button type="submit" class="btn-back">Voltar à Página Inicial</button>
         </form>
     </div>
 </body>

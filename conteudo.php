@@ -1,10 +1,31 @@
 <?php
 require 'db.php'; // Inclui a conexão ao banco de dados
 
+// Verificação de formulário enviado
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filme_id'])) {
+    $filme_id = $_POST['filme_id'];
+    $autor = !empty($_POST['autor']) ? $_POST['autor'] : 'Anônimo';
+    $comentario = trim($_POST['comentario']); // Remover espaços extras
+
+    // Validação para garantir que o comentário não está vazio
+    if (!empty($comentario)) {
+        // Inserir o comentário no banco
+        $stmt = $pdo->prepare("INSERT INTO comentarios (filme_id, autor, comentario, data_comentario) VALUES (:filme_id, :autor, :comentario, NOW())");
+        $stmt->bindParam(':filme_id', $filme_id, PDO::PARAM_INT);
+        $stmt->bindParam(':autor', $autor, PDO::PARAM_STR);
+        $stmt->bindParam(':comentario', $comentario, PDO::PARAM_STR);
+        $stmt->execute();
+    }
+    
+    // Redireciona após o envio para evitar o reenvio do formulário
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
 // Consulta para obter todos os filmes
 $filmes = $pdo->query("SELECT * FROM catalogofilmes ORDER BY release_date DESC")->fetchAll(PDO::FETCH_ASSOC);
 
-// Consulta para buscar os comentários de todos os filmes
+// Consulta para obter os comentários por filme
 $comentarios_por_filme = [];
 foreach ($filmes as $filme) {
     $filme_id = $filme['id'];
@@ -13,44 +34,8 @@ foreach ($filmes as $filme) {
     $comentarios_stmt->execute();
     $comentarios_por_filme[$filme_id] = $comentarios_stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-// Adicionar novo comentário
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filme_id'])) {
-    $filme_id = $_POST['filme_id'];
-    $autor = $_POST['autor'] ?? 'Anônimo';
-    $comentario = $_POST['comentario'] ?? '';
-
-    if (!empty($comentario)) {
-        $stmt = $pdo->prepare("INSERT INTO comentarios (filme_id, autor, comentario, data_comentario) VALUES (:filme_id, :autor, :comentario, NOW())");
-        $stmt->bindParam(':filme_id', $filme_id, PDO::PARAM_INT);
-        $stmt->bindParam(':autor', $autor, PDO::PARAM_STR);
-        $stmt->bindParam(':comentario', $comentario, PDO::PARAM_STR);
-        $stmt->execute();
-
-        // Atualiza os comentários do filme após o envio
-        $comentarios_stmt = $pdo->prepare("SELECT * FROM comentarios WHERE filme_id = :id ORDER BY data_comentario DESC");
-        $comentarios_stmt->bindParam(':id', $filme_id, PDO::PARAM_INT);
-        $comentarios_stmt->execute();
-        $comentarios_por_filme[$filme_id] = $comentarios_stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-}
-
-// Excluir comentário
-if (isset($_POST['excluir_comentario']) && isset($_POST['comentario_id'])) {
-    $comentario_id = $_POST['comentario_id'];
-
-    // Exclui o comentário sem a necessidade de verificar o autor
-    $stmt = $pdo->prepare("DELETE FROM comentarios WHERE id = :comentario_id");
-    $stmt->bindParam(':comentario_id', $comentario_id, PDO::PARAM_INT);
-    $stmt->execute();
-
-    // Atualiza os comentários do filme após a exclusão
-    $comentarios_stmt = $pdo->prepare("SELECT * FROM comentarios WHERE filme_id = :id ORDER BY data_comentario DESC");
-    $comentarios_stmt->bindParam(':id', $_POST['filme_id'], PDO::PARAM_INT);
-    $comentarios_stmt->execute();
-    $comentarios_por_filme[$_POST['filme_id']] = $comentarios_stmt->fetchAll(PDO::FETCH_ASSOC);
-}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -184,33 +169,6 @@ if (isset($_POST['excluir_comentario']) && isset($_POST['comentario_id'])) {
         .form-comentario button:hover {
             background-color: #b20710;
         }
-
-        /* Botão de Excluir Comentário */
-        .btn-excluir {
-            background-color: #e74c3c;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s, transform 0.3s;
-        }
-        .btn-excluir:hover {
-            background-color: #c0392b;
-            transform: scale(1.1);
-        }
-        .btn-excluir:active {
-            transform: scale(0.95);
-        }
-
-        /* Respostas de Comentários */
-        .comentario-resposta {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-        }
     </style>
 </head>
 <body>
@@ -234,11 +192,6 @@ if (isset($_POST['excluir_comentario']) && isset($_POST['comentario_id'])) {
                             <div class="comentario">
                                 <p class="autor"><?= htmlspecialchars($comentario['autor']) ?> - <?= htmlspecialchars($comentario['data_comentario']) ?></p>
                                 <p class="texto"><?= htmlspecialchars($comentario['comentario']) ?></p>
-                                <form method="POST">
-                                    <input type="hidden" name="filme_id" value="<?= $filme['id'] ?>">
-                                    <input type="hidden" name="comentario_id" value="<?= $comentario['id'] ?>">
-                                    <button class="btn-excluir" type="submit" name="excluir_comentario">Excluir Comentário</button>
-                                </form>
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -247,9 +200,9 @@ if (isset($_POST['excluir_comentario']) && isset($_POST['comentario_id'])) {
 
                     <form class="form-comentario" method="POST">
                         <input type="hidden" name="filme_id" value="<?= $filme['id'] ?>">
-                        <textarea name="comentario" rows="4" placeholder="Escreva seu comentário aqui..."></textarea>
                         <input type="text" name="autor" placeholder="Seu nome (opcional)">
-                        <button type="submit">Adicionar Comentário</button>
+                        <textarea name="comentario" placeholder="Escreva seu comentário..." rows="4"></textarea>
+                        <button type="submit">Comentar</button>
                     </form>
                 </div>
             </div>
