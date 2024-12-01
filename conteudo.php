@@ -10,11 +10,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filme_id'])) {
     // Validação para garantir que o comentário não está vazio
     if (!empty($comentario)) {
         // Inserir o comentário no banco
-        $stmt = $pdo->prepare("INSERT INTO comentarios (filme_id, autor, comentario, data_comentario) VALUES (:filme_id, :autor, :comentario, NOW())");
+        $autor_email = $_SESSION['email'];
+        $stmt = $pdo->prepare("INSERT INTO comentarios (filme_id, autor, comentario, data_comentario, autor_email) VALUES (:filme_id, :autor, :comentario, NOW(), :autor_email)");
         $stmt->bindParam(':filme_id', $filme_id, PDO::PARAM_INT);
         $stmt->bindParam(':autor', $autor, PDO::PARAM_STR);
         $stmt->bindParam(':comentario', $comentario, PDO::PARAM_STR);
+        $stmt->bindParam(':autor_email', $autor_email, PDO::PARAM_STR);
         $stmt->execute();
+
     }
     
     // Redireciona após o envio para evitar o reenvio do formulário
@@ -34,6 +37,23 @@ foreach ($filmes as $filme) {
     $comentarios_stmt->execute();
     $comentarios_por_filme[$filme_id] = $comentarios_stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// Lógica para apagar comentário feito pelo autor
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comentario'])) {
+    $comentario_id = $_POST['comentario_id'];
+    $autor_email = $_SESSION['email'];
+
+    // Verificar se o comentário pertence ao usuário logado
+    $stmt = $pdo->prepare("DELETE FROM comentarios WHERE id = :id AND autor_email = :autor_email");
+    $stmt->bindParam(':id', $comentario_id, PDO::PARAM_INT);
+    $stmt->bindParam(':autor_email', $autor_email, PDO::PARAM_STR);
+    $stmt->execute();
+
+    // Redirecionar para evitar o reenvio do formulário
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
+}
+
 ?>
 
 
@@ -192,8 +212,19 @@ foreach ($filmes as $filme) {
                             <div class="comentario">
                                 <p class="autor"><?= htmlspecialchars($comentario['autor']) ?> - <?= htmlspecialchars($comentario['data_comentario']) ?></p>
                                 <p class="texto"><?= htmlspecialchars($comentario['comentario']) ?></p>
+
+                                <!-- Mostrar botão somente se o comentário for do usuário logado -->
+                                <?php if ($comentario['autor_email'] === $_SESSION['email']): ?>
+                                <form method="POST" action="">
+                                    <input type="hidden" name="comentario_id" value="<?= $comentario['id'] ?>">
+                                    <button type="submit" name="delete_comentario" style="background-color: red; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">
+                                        Apagar
+                                    </button>
+                                </form>
+                        <?php endif; ?>
                             </div>
-                        <?php endforeach; ?>
+                            <?php endforeach; ?>
+
                     <?php else: ?>
                         <p>Seja o primeiro a comentar!</p>
                     <?php endif; ?>

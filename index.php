@@ -1,4 +1,5 @@
 <?php
+session_start();
 include('db.php');  // Inclui a conexão PDO
 
 $message = '';  // Mensagem a ser exibida ao usuário
@@ -24,6 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Verifica se a senha fornecida bate com a do banco de dados usando password_verify
             if (password_verify($password, $login['senha'])) {
                 // Senha correta, redireciona para a página inicial
+                $_SESSION["email"] = $email;
+                $_SESSION["senha"] = $password;
                 header('Location: pginicial.php');
                 exit(); // Impede que o script continue executando após o redirecionamento
             } else {
