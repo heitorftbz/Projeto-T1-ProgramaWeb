@@ -1,7 +1,6 @@
 <?php
 ob_start();
 session_start(); // Inicia a sessão
-
 ?>
 
 <!DOCTYPE html>
@@ -250,6 +249,7 @@ session_start(); // Inicia a sessão
         <ul>
             <li><a href="pginicial.php">Início</a></li>
             <li><a href="sobrenos.php">Sobre nós</a></li>
+            <li><a href="logout.php">Sair da conta</a></li>
         </ul>
     </nav>
 
