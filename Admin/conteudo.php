@@ -36,10 +36,11 @@ if (isset($_POST['excluir_comentario']) && isset($_POST['comentario_id'])) {
     $stmt->bindParam(':comentario_id', $comentario_id, PDO::PARAM_INT);
     $stmt->execute();
 
-    // Redireciona para evitar reenvio do formulário
+    // Redireciona para a mesma página após a exclusão do comentário
     header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
+    exit; // Garante que o script será interrompido aqui
 }
+
 
 // Excluir filme e seus comentários
 if (isset($_POST['excluir_filme']) && isset($_POST['filme_id'])) {
